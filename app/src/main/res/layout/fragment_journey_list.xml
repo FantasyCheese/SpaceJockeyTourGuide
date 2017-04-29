@@ -7,7 +7,7 @@
     tools:context="org.descinerds.spacejockeytourguide.JourneyListActivity$PlaceholderFragment">
 
     <TextView
-        android:id="@+id/section_label"
+        android:id="@+id/text_journey_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="32dp"

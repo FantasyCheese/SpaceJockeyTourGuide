@@ -6,4 +6,34 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+
+
+
+    <dimen name="question_title">25sp</dimen>
+    <dimen name="category_menu_title">25sp</dimen>
+    <dimen name="question_content">20sp</dimen>
+    <dimen name="subquestion_title">25sp</dimen>
+    <dimen name="login_text_size">18sp</dimen>
+    <dimen name="restaurant_small_title">8sp</dimen>
+
+    <dimen name="spinner_text">25sp</dimen>
+    <dimen name="banner_text">20sp</dimen>
+    <dimen name="dialog_title_size">20sp</dimen>
+    <dimen name="dialog_text_size">20sp</dimen>
+    <dimen name="default_padding">5dp</dimen>
+    <dimen name="half_padding">5dp</dimen>
+    <dimen name="double_padding">10dp</dimen>
+    <dimen name="four_times_padding">20dp</dimen>
+    <dimen name="title_text">25sp</dimen>
+    <dimen name="button_text">25sp</dimen>
+    <dimen name="button_medium_text">20sp</dimen>
+    <dimen name="restaurant_title">25sp</dimen>
+    <dimen name="restaurant_edittext">15sp</dimen>
+    <dimen name="restaurant_phone_edittext">18sp</dimen>
+    <dimen name="restaurant_subtitle">15sp</dimen>
+    <dimen name="category_menu_text">20sp</dimen>
+    <dimen name="progress_text">15sp</dimen>
+    <dimen name="actionbar_text">15sp</dimen>
+    <dimen name="image_thumbnail_size">200dp</dimen>
+    <dimen name="image_thumbnail_spacing">25dp</dimen>
 </resources>

@@ -36,6 +36,11 @@ android {
 
 repositories {
     maven { url "http://dl.bintray.com/piasy/maven" }
+    maven { url "https://jitpack.io" }
+}
+
+kapt {
+    generateStubs = true
 }
 
 dependencies {
@@ -85,11 +90,19 @@ dependencies {
     def firebase_version = '10.2.4'
     compile "com.google.firebase:firebase-auth:$firebase_version"
     compile "com.google.android.gms:play-services-auth:$firebase_version"
+    compile "com.google.firebase:firebase-database:$firebase_version"
+    compile "com.google.firebase:firebase-storage:$firebase_version"
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
     compile 'com.github.piasy:rxandroidaudio:1.5.1'
     compile 'com.github.piasy:AudioProcessor:1.5.1'
+
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+
+    def permission_version = '2.3.2'
+    compile "com.github.hotchemi:permissionsdispatcher:${permission_version}"
+    kapt "com.github.hotchemi:permissionsdispatcher-processor:${permission_version}"
 }
 repositories {
     jcenter()

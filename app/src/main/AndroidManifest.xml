@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.descinerds.spacejockeytourguide">
 
+    <!--let user record description of images-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!--normal-->
+    <!--vibrate when control recording-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -19,7 +26,7 @@
         </activity>
         <activity android:name=".JourneyListActivity" />
         <activity android:name=".JourneyDetailActivity" />
-        <activity android:name=".RecordActivity"></activity>
+        <activity android:name=".RecorderActivity" />
     </application>
 
 </manifest>
