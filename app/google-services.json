@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "255814477296",
+    "firebase_url": "https://spacejockeytourguide.firebaseio.com",
+    "project_id": "spacejockeytourguide",
+    "storage_bucket": "spacejockeytourguide.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255814477296:android:fbfb138551a662da",
+        "android_client_info": {
+          "package_name": "org.descinerds.spacejockeytourguide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255814477296-v3emk81fo4kp9jffidpk8eesbgl2t8bt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.descinerds.spacejockeytourguide",
+            "certificate_hash": "15659d19906612208112f15dbeae8049917af2e9"
+          }
+        },
+        {
+          "client_id": "255814477296-43nvu2si18opa6cjqke4c1fe9ofjich3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDxAESMqWhef-nyfirlC5H3hShWO8DUl4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255814477296-43nvu2si18opa6cjqke4c1fe9ofjich3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

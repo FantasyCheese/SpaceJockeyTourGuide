@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.jakewharton.hugo'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "org.descinerds.spacejockeytourguide"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    ////////// logic Libraries /////////
+    compile 'io.reactivex.rxjava2:rxjava:2.0.9'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    def retrofit_version = '2.2.0'
+    compile "com.squareup.retrofit2:retrofit:${retrofit_version}" // http request
+    compile "com.squareup.retrofit2:converter-gson:${retrofit_version}" // http request
+    compile "com.squareup.retrofit2:adapter-rxjava:${retrofit_version}" // http request
+
+    compile 'com.karumi:dexter:3.0.2'
+
+    def stetho_version = '1.4.2'
+    compile "com.facebook.stetho:stetho:${stetho_version}"
+    compile "com.facebook.stetho:stetho-okhttp3:${stetho_version}"
+    ////////// logic Libraries /////////
+
+    ////////// UI Libraries ///////////
+    def android_support_version = '25.3.1'
+    compile "com.android.support:appcompat-v7:${android_support_version}"
+    compile "com.android.support:support-v13:${android_support_version}"
+    compile "com.android.support:recyclerview-v7:${android_support_version}"
+    compile "com.android.support:preference-v7:${android_support_version}"
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    def anko_version = '0.9'
+    compile "org.jetbrains.anko:anko-sdk19:${anko_version}"
+    compile "org.jetbrains.anko:anko-appcompat-v7:${anko_version}"
+    compile "org.jetbrains.anko:anko-support-v4:${anko_version}"
+    compile "org.jetbrains.anko:anko-recyclerview-v7:${anko_version}"
+
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    ////////// UI Libraries ///////////
+
+
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    compile 'com.google.firebase:firebase-auth:10.2.1'
+}
+repositories {
+    jcenter()
+}
+
+apply plugin: 'com.google.gms.google-services'
