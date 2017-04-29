@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -59,7 +61,14 @@ class JourneyDetailActivity : AppCompatActivity() {
                     list_image.adapter = ImageAdapter("$path/adventure", journey.adventure)
                 }
                 R.id.navigation_notifications -> {
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid
 
+                    val elements = mutableListOf<Element>()
+                    elements.addAll(journey.tour)
+                    elements.addAll(journey.adventure)
+                    val userElements = elements.filter { it.recordings?.containsKey(userId)?:false }
+
+                    list_image.adapter = ImageAdapter("$path/achievement", userElements)
                 }
                 else -> return@OnNavigationItemSelectedListener false
             }
@@ -70,10 +79,27 @@ class JourneyDetailActivity : AppCompatActivity() {
     inner class ImageAdapter(val path:String, val elements: List<Element>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val element = elements[position]
+            val vh = holder as ViewHolder
+
             Glide.with(holder.itemView.context)
-                    .load(elements[position].image_url).into((holder as ViewHolder).imageView)
+                    .load(element.image_url).into(vh.imageView)
             holder.itemView.onClick {
-                act.startActivity<RecorderActivity>(Keys.IMAGE to elements[position].image_url, Keys.PATH to "$path/$position")
+                act.startActivity<RecorderActivity>(Keys.IMAGE to element.image_url, Keys.PATH to "$path/$position")
+            }
+
+            vh.textDescription.text = when {
+                path.contains("tour") -> "Click to provide your description."
+                path.contains("adventure") -> "Click to provide environmental sounds."
+                path.contains("achievement") -> {
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+                    val likeCount = element.recordings[userId]?.like
+                    "$likeCount people recommend this."
+                }
+                else -> {
+                    vh.textDescription.visibility = View.GONE
+                    null
+                }
             }
         }
 
@@ -84,6 +110,7 @@ class JourneyDetailActivity : AppCompatActivity() {
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val imageView = (itemView as ViewGroup).find<ImageView>(R.id.image_view)
+            val textDescription = (itemView as ViewGroup).find<TextView>(R.id.text_description)
         }
     }
 }

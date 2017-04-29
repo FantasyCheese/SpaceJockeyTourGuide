@@ -6,12 +6,29 @@
     android:layout_height="match_parent"
     tools:context="org.descinerds.spacejockeytourguide.JourneyListActivity$PlaceholderFragment">
 
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp"
+        tools:src="@drawable/sample_image"
+        />
+
     <TextView
         android:id="@+id/text_journey_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#AA000000"
         android:padding="32dp"
         android:textSize="36sp"
+        android:textColor="@android:color/white"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,6 +36,8 @@
         app:layout_constraintTop_toTopOf="@+id/constraintLayout"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1"
-        tools:text="2017: A SPACE JOCKEY" />
+        tools:text="2017: A SPACE JOCKEY"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp" />
 
 </android.support.constraint.ConstraintLayout>

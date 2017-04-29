@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -21,16 +20,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.RuntimeExecutionException;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.jetbrains.anko.ToastsKt;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -234,24 +231,38 @@ public class RecorderActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void uploadRecord() {
-        StorageReference ref = FirebaseStorage.getInstance().getReference(recordFilePath);
-        ref.putFile(Uri.fromFile(new File(fullFilePath)));
-        ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+        final StorageReference ref = FirebaseStorage.getInstance().getReference(recordFilePath);
+        ref.putFile(Uri.fromFile(new File(fullFilePath))).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                try {
-                    String url = task.getResult().toString();
-                    DatabaseReference ref = FirebaseDatabase.getInstance()
-                            .getReference(path).child("recordings").child(userId);
-                    ref.child("url").setValue(url);
-                    ref.child("like").setValue(0);
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(RecorderActivity.this, "上傳檔案成功!", Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(RecorderActivity.this, "上傳成功!", Toast.LENGTH_SHORT).show();
-                } catch (RuntimeExecutionException e) {
-                    e.printStackTrace();
+                setRecordUrl(ref);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(RecorderActivity.this, "上傳檔案失敗!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-                    Toast.makeText(RecorderActivity.this, "上傳失敗!", Toast.LENGTH_SHORT).show();
-                }
+    private void setRecordUrl(StorageReference ref) {
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                DatabaseReference ref = FirebaseDatabase.getInstance()
+                        .getReference(path).child("recordings").child(userId);
+                ref.child("url").setValue(uri.toString());
+                ref.child("like").setValue(0);
+
+                Toast.makeText(RecorderActivity.this, "設定資料庫成功!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                Toast.makeText(RecorderActivity.this, "設定資料庫失敗!", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -1,20 +1,25 @@
 package org.descinerds.spacejockeytourguide
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
-import android.view.*
-import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_journey_list.*
 import kotlinx.android.synthetic.main.fragment_journey_list.*
 import org.jetbrains.anko.bundleOf
-import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.act
@@ -28,11 +33,6 @@ class JourneyListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_journey_list)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError?) {}
@@ -66,10 +66,12 @@ class JourneyListActivity : AppCompatActivity() {
             listener = object : ValueEventListener{
                 override fun onCancelled(p0: DatabaseError?) {}
                 override fun onDataChange(data: DataSnapshot) {
-                    text_journey_name.text = data.getValue(Journey::class.java).name
+                    val journey = data.getValue(Journey::class.java)
+                    text_journey_name.text = journey.name
                     text_journey_name.onClick {
                         act.startActivity<JourneyDetailActivity>(Keys.PATH to path)
                     }
+                    Glide.with(act).load(journey.image).centerCrop().into(background)
                 }
             }
             App.db.getReference(path).addValueEventListener(listener)
