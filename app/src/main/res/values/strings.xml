@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">SpaceJockeyTourGuide</string>
+    <string name="auth_failed">LOGIN FAIL</string>
+    <string name="register_failed">REGISTER FAIL</string>
+    <string name="register_success">REGISTER SUCCESS</string>
+    <string name="auth_success">LOGIN SUCCESS</string>
+    <string name="web_client_id">255814477296-43nvu2si18opa6cjqke4c1fe9ofjich3.apps.googleusercontent.com</string>
+    <string name="title_activity_journey_list">Space Journeys</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_journey_detail">JourneyDetailActivity</string>
+    <string name="title_tour">TOUR</string>
+    <string name="title_adventure">ADVENTURE</string>
+    <string name="title_achievement">ACHIEVEMENT</string>
 </resources>
