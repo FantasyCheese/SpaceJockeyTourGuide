@@ -10,17 +10,27 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.RuntimeExecutionException;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import org.jetbrains.anko.ToastsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +55,7 @@ public class RecorderActivity extends AppCompatActivity implements View.OnClickL
     private int record_position = 0;
     private String fullFilePath;
     private String recordFilePath;
+    private String userId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,9 +80,12 @@ public class RecorderActivity extends AppCompatActivity implements View.OnClickL
         String imageUrl = getIntent().getStringExtra("IMAGE");
         Glide.with(this).load(imageUrl).into(photoView);
 
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         path = getIntent().getStringExtra(Keys.Companion.getPATH());
-        recordFilePath = path + "/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "_record.mp4";
-        fullFilePath = Environment.getDataDirectory() + "/" + recordFilePath;
+        recordFilePath = path + "/" + userId + "_record.mp4";
+        fullFilePath = getFilesDir() + "/" + recordFilePath;
+        File dir = new File(getFilesDir()+"/"+path);
+        if (!dir.exists()) dir.mkdirs();
 
         checkRecordExist();
     }
@@ -175,25 +189,29 @@ public class RecorderActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void stopRecord() {
-        if (is_recording && !is_playing) {
-            recorder.stop();
-            recorder.reset();
-            recorder.release();
-            recorder = null;
-        } else if (!is_recording && is_playing) {
-            player.stop();
-            player.reset();
-            player.release();
-            player = null;
+        try {
+            if (is_recording && !is_playing) {
+                recorder.stop();
+                recorder.reset();
+                recorder.release();
+                recorder = null;
+            } else if (!is_recording && is_playing) {
+                player.stop();
+                player.reset();
+                player.release();
+                player = null;
+            }
+
+            is_recording = false;
+            is_playing = false;
+
+            btn_play.setEnabled(true);
+            btn_record.setEnabled(true);
+            btn_stop.setEnabled(false);
+            btn_delete.setEnabled(true);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
-
-        is_recording = false;
-        is_playing = false;
-
-        btn_play.setEnabled(true);
-        btn_record.setEnabled(true);
-        btn_stop.setEnabled(false);
-        btn_delete.setEnabled(true);
     }
 
     private void openSureDeleteRecordDialog() {
@@ -216,7 +234,26 @@ public class RecorderActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void uploadRecord() {
-        FirebaseStorage.getInstance().getReference(recordFilePath).putFile(Uri.fromFile(new File(fullFilePath)));
+        StorageReference ref = FirebaseStorage.getInstance().getReference(recordFilePath);
+        ref.putFile(Uri.fromFile(new File(fullFilePath)));
+        ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                try {
+                    String url = task.getResult().toString();
+                    DatabaseReference ref = FirebaseDatabase.getInstance()
+                            .getReference(path).child("recordings").child(userId);
+                    ref.child("url").setValue(url);
+                    ref.child("like").setValue(0);
+
+                    Toast.makeText(RecorderActivity.this, "上傳成功!", Toast.LENGTH_SHORT).show();
+                } catch (RuntimeExecutionException e) {
+                    e.printStackTrace();
+
+                    Toast.makeText(RecorderActivity.this, "上傳失敗!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

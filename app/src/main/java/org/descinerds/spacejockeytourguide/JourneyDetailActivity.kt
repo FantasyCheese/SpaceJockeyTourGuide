@@ -23,19 +23,27 @@ class JourneyDetailActivity : AppCompatActivity() {
 
     private lateinit var path: String
 
+    private var listener: ValueEventListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_journey_detail)
 
         path = intent.getStringExtra(Keys.PATH)
 
-        App.db.getReference(path).addValueEventListener(object : ValueEventListener {
+        listener = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError?) {}
             override fun onDataChange(data: DataSnapshot) {
                 val journey = data.getValue(Journey::class.java)
                 updateUI(journey)
             }
-        })
+        }
+        App.db.getReference(path).addValueEventListener(listener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        App.db.getReference(path).removeEventListener(listener?:return)
     }
 
     private fun updateUI(journey: Journey) {
@@ -59,17 +67,17 @@ class JourneyDetailActivity : AppCompatActivity() {
         })
     }
 
-    inner class ImageAdapter(val path:String, val images: List<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    inner class ImageAdapter(val path:String, val elements: List<Element>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             Glide.with(holder.itemView.context)
-                    .load(images[position]).into((holder as ViewHolder).imageView)
+                    .load(elements[position].image_url).into((holder as ViewHolder).imageView)
             holder.itemView.onClick {
-                act.startActivity<RecorderActivity>(Keys.IMAGE to images[position], Keys.PATH to path)
+                act.startActivity<RecorderActivity>(Keys.IMAGE to elements[position].image_url, Keys.PATH to "$path/$position")
             }
         }
 
-        override fun getItemCount() = images.size
+        override fun getItemCount() = elements.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
                 ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.journey_element, parent, false))

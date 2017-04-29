@@ -22,6 +22,8 @@ import org.jetbrains.anko.support.v4.act
 class JourneyListActivity : AppCompatActivity() {
     val path = "journey"
 
+    private var listener: ValueEventListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_journey_list)
@@ -32,13 +34,19 @@ class JourneyListActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        App.db.getReference(path).addValueEventListener(object : ValueEventListener {
+        listener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError?) {}
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 container.adapter = JourneyPagerAdapter(supportFragmentManager, snapshot.childrenCount.toInt())
             }
-        })
+        }
+        App.db.getReference(path).addValueEventListener(listener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        App.db.getReference(path).removeEventListener(listener?:return)
     }
 
     class PlaceholderFragment : Fragment() {
@@ -49,20 +57,27 @@ class JourneyListActivity : AppCompatActivity() {
                                   savedInstanceState: Bundle?): View
                 = inflater!!.inflate(R.layout.fragment_journey_list, container, false)
 
+        private var listener: ValueEventListener? = null
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             path = arguments.getString(Keys.PATH)
-            App.db.getReference(path).addValueEventListener(object : ValueEventListener{
+
+            listener = object : ValueEventListener{
                 override fun onCancelled(p0: DatabaseError?) {}
                 override fun onDataChange(data: DataSnapshot) {
-                    val textView = view.find<TextView>(R.id.text_journey_name)
-                    textView.text = data.getValue(Journey::class.java).name
-
+                    text_journey_name.text = data.getValue(Journey::class.java).name
                     text_journey_name.onClick {
                         act.startActivity<JourneyDetailActivity>(Keys.PATH to path)
                     }
                 }
-            })
+            }
+            App.db.getReference(path).addValueEventListener(listener)
+        }
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            App.db.getReference(path).removeEventListener(listener?:return)
         }
 
         companion object {
