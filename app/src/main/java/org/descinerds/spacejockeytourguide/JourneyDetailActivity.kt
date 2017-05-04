@@ -37,7 +37,9 @@ class JourneyDetailActivity : AppCompatActivity() {
             override fun onCancelled(p0: DatabaseError?) {}
             override fun onDataChange(data: DataSnapshot) {
                 val journey = data.getValue(Journey::class.java)
+                val idx = navigation.selectedItemId
                 updateUI(journey)
+                navigation.selectedItemId = idx
             }
         }
         App.db.getReference(path).addValueEventListener(listener)
@@ -85,6 +87,7 @@ class JourneyDetailActivity : AppCompatActivity() {
             Glide.with(holder.itemView.context)
                     .load(element.image_url).into(vh.imageView)
             holder.itemView.onClick {
+                if (path.contains("achievement")) return@onClick
                 act.startActivity<RecorderActivity>(Keys.IMAGE to element.image_url, Keys.PATH to "$path/$position")
             }
 
